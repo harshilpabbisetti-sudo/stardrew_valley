@@ -8,15 +8,16 @@ class Player(pygame.sprite.Sprite):
         super().__init__(group)
 
         self.import_assets()
+        self.status = 'down_idle'
+        self.frame_index = 0
 
         # general setup
-        self.image = pygame.Surface((32, 64))
-        self.image.fill('green')
+        self.image = self.animations[self.status][self.frame_index]
         self.rect = self.image.get_rect(center=pos)
 
         # movement attributes
         self.dirn = pygame.math.Vector2()
-        self.pos = pygame.math.Vector2()
+        self.pos = pygame.math.Vector2(self.rect.center)
         self.speed = 200
 
     def import_assets(self):
