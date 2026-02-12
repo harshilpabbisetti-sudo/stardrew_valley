@@ -94,8 +94,8 @@ class Player(pygame.sprite.Sprite):
             # change tool
             if keys[pygame.K_q] and not self.timers['tool switch'].active:
                 self.timers['tool switch'].activate()
-                self.seed_index += 1
-                if self.seed_index >= len(self.tools):
+                self.tool_index += 1
+                if self.tool_index >= len(self.tools):
                     self.tool_index = 0
                 self.selected_tool = self.tools[self.tool_index]
 
