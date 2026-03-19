@@ -5,7 +5,7 @@ from timer import Timer
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, group, collision_sprites, tree_sprites):
+    def __init__(self, pos, group, collision_sprites, tree_sprites, interaction):
         super().__init__(group)
 
         self.import_assets()
@@ -54,6 +54,8 @@ class Player(pygame.sprite.Sprite):
 
         # interaction
         self.tree_sprites = tree_sprites
+        self.interaction = interaction
+        self.sleep = False
 
     def get_target_pos(self):
         self.target_pos = self.rect.center + PLAYER_TOOL_OFFSET[self.status.split('_')[0]]
@@ -92,7 +94,7 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         # directions
-        if not self.timers['tool use'].active:
+        if not self.timers['tool use'].active and not self.sleep:
             if keys[pygame.K_UP]:
                 self.dirn.y = -1
                 self.status = 'up'
@@ -138,6 +140,15 @@ class Player(pygame.sprite.Sprite):
                 if self.seed_index >= len(self.seeds):
                     self.seed_index = 0
                 self.selected_seed = self.seeds[self.seed_index]
+
+            # interaction
+            if keys[pygame.K_RETURN]:
+                collided_interaction_sprite = pygame.sprite.spritecollide(self, self.interaction, False)
+                if collided_interaction_sprite:
+                    if collided_interaction_sprite[0].name == 'Bed':
+                        self.sleep = True
+                    if collided_interaction_sprite[0].name == 'Trader':
+                        pass
 
     def get_status(self):
         # idle
