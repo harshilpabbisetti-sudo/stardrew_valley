@@ -60,8 +60,10 @@ class AfterEffect(Generic):
 
 
 class Tree(Generic):
-    def __init__(self, pos, surf, groups, name):
+    def __init__(self, pos, surf, groups, name, all_sprites):
         super().__init__(pos, surf, groups)
+
+        self.all_sprites = all_sprites
 
         # tree attributes
         self.health = 5
@@ -95,20 +97,21 @@ class Tree(Generic):
                 y = pos[1] + self.rect.top
                 Generic(pos=(x, y),
                         surf=self.apple_surf,
-                        groups=[self.apple_sprite, self.groups()[0]],       # index 0 is all_sprites
+                        groups=[self.apple_sprite, self.all_sprites],
                         z=LAYERS['fruit'])
-                print('fruit created')
 
     def check_death(self):
         if self.health <= 0:
             AfterEffect(pos=self.rect.topleft,
                         surf=self.image,
-                        groups=self.groups()[0],
+                        groups=self.all_sprites,
                         z=LAYERS['fruit'])
             self.image = self.stump_surf
             self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
             self.hitbox = self.rect.copy().inflate(-10, -self.rect.height * 0.6)
             self.alive = False
+            for apple in self.apple_sprite.sprites():
+                apple.kill()
 
     def update(self, dt):
         if self.alive:
