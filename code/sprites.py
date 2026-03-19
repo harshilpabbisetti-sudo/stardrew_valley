@@ -60,10 +60,11 @@ class AfterEffect(Generic):
 
 
 class Tree(Generic):
-    def __init__(self, pos, surf, groups, name, all_sprites):
+    def __init__(self, pos, surf, groups, name, all_sprites, player_add):
         super().__init__(pos, surf, groups)
 
         self.all_sprites = all_sprites
+        self.player_add = player_add
 
         # tree attributes
         self.health = 5
@@ -89,6 +90,7 @@ class Tree(Generic):
                         groups=self.groups()[0],
                         z=LAYERS['fruit'])
             random_apple.kill()
+            self.player_add('apple')
 
     def create_fruit(self):
         for pos in self.apple_pos:
@@ -110,6 +112,7 @@ class Tree(Generic):
             self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
             self.hitbox = self.rect.copy().inflate(-10, -self.rect.height * 0.6)
             self.alive = False
+            self.player_add('wood')
             for apple in self.apple_sprite.sprites():
                 apple.kill()
 
