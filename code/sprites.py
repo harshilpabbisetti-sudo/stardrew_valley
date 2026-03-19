@@ -39,6 +39,24 @@ class WildFlower(Generic):
     def __init__(self, pos, surf, groups):
         super().__init__(pos, surf, groups)
         self.hitbox = self.rect.copy().inflate((-20, -self.rect.height*0.9))
+        
+
+class AfterEffect(Generic):
+    def __init__(self, pos, surf, groups, z, duration=200):
+        super().__init__(pos, surf, groups, z)
+        self.start_time = pygame.time.get_ticks()
+        self.duration = duration
+
+        # white surf
+        mask_surf = pygame.mask.from_surface(self.image)
+        new_surf = mask_surf.to_surface()
+        new_surf.set_colorkey((0, 0, 0))
+        self.image = new_surf
+
+    def update(self, dt):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.start_time > self.duration:
+            self.kill()
 
 
 class Tree(Generic):
@@ -64,8 +82,11 @@ class Tree(Generic):
         # removing apple
         if len(self.apple_sprite.sprites()) > 0:
             random_apple = choice(self.apple_sprite.sprites())
+            AfterEffect(pos=random_apple.rect.topleft,
+                        surf=random_apple.image,
+                        groups=self.groups()[0],
+                        z=LAYERS['fruit'])
             random_apple.kill()
-
 
     def create_fruit(self):
         for pos in self.apple_pos:
@@ -74,14 +95,19 @@ class Tree(Generic):
                 y = pos[1] + self.rect.top
                 Generic(pos=(x, y),
                         surf=self.apple_surf,
-                        groups=[self.apple_sprite, self.groups()[0]],
-                        z=LAYERS['fruit'])     # index 0 is all_sprites
+                        groups=[self.apple_sprite, self.groups()[0]],       # index 0 is all_sprites
+                        z=LAYERS['fruit'])
+                print('fruit created')
 
     def check_death(self):
         if self.health <= 0:
+            AfterEffect(pos=self.rect.topleft,
+                        surf=self.image,
+                        groups=self.groups()[0],
+                        z=LAYERS['fruit'])
             self.image = self.stump_surf
             self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
-            self.hitbox = self.rect.copy().inflate(-10, -self.rect.height *  0.6)
+            self.hitbox = self.rect.copy().inflate(-10, -self.rect.height * 0.6)
             self.alive = False
 
     def update(self, dt):
