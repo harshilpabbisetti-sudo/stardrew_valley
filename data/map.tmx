@@ -542,7 +542,7 @@
   <object id="270" gid="150" x="1058" y="522" width="44" height="48"/>
   <object id="271" gid="150" x="1042" y="403" width="44" height="48"/>
  </objectgroup>
- <objectgroup id="12" name="Player" visible="0">
+ <objectgroup id="12" name="Player">
   <object id="253" name="Start" x="1561.33" y="1772">
    <point/>
   </object>
