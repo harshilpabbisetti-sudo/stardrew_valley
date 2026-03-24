@@ -1,7 +1,10 @@
+import random
+
 import pygame
 from settings import *
 from pytmx.util_pygame import load_pygame
 from support import *
+from random import choice
 
 
 class SoilTile(pygame.sprite.Sprite):
@@ -10,6 +13,14 @@ class SoilTile(pygame.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_rect(topleft=pos)
         self.z = LAYERS['soil']
+        
+
+class WaterTile(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(topleft=pos)
+        self.z = LAYERS['soil water']
 
 
 class SoilLayer:
@@ -18,9 +29,11 @@ class SoilLayer:
         # sprite groups
         self.all_sprites = all_sprites
         self.soil_sprites = pygame.sprite.Group()
+        self.water_sprites = pygame.sprite.Group()
 
         # graphics
         self.soil_surfs = import_folder_dict('graphics/soil')
+        self.water_surfs = import_folder('graphics/soil_water')
 
         self.create_soil_grid()
         self.create_hit_rect()
@@ -51,8 +64,29 @@ class SoilLayer:
                 y = rect.y // TILE_SIZE
 
                 if 'F' in self.grid[y][x]:
-                    self.grid[y][x].append('X')                                           # 'X' tells that there is a soil patch there
+                    self.grid[y][x].append('X')                                 # 'X' tells that there is a soil patch there
                     self.create_soil_tiles()
+
+    def water(self, point):
+        for soil_sprite in self.soil_sprites.sprites():
+            if soil_sprite.rect.collidepoint(point):
+                x = soil_sprite.rect.x // TILE_SIZE
+                y = soil_sprite.rect.y // TILE_SIZE
+                self.grid[y][x].append('W')                                     # 'W' tells that the soil patch is watered
+
+                WaterTile(pos=soil_sprite.rect.topleft,
+                          surf=choice(self.water_surfs),
+                          groups=[self.all_sprites, self.water_sprites])
+
+    def remove_water(self):
+        for water_sprite in self.water_sprites.sprites():
+            water_sprite.kill()
+
+        for row in self.grid:
+            for cell in row:
+                if 'W' in cell:
+                    cell.remove('W')
+                    print(cell)
 
     def create_soil_tiles(self):
         self.soil_sprites.empty()

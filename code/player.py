@@ -68,8 +68,9 @@ class Player(pygame.sprite.Sprite):
             for tree in self.tree_sprites.sprites():
                 if tree.rect.collidepoint(self.target_pos):
                     tree.damage()
+                    break
         if self.selected_tool == 'water':
-            pass
+            self.soil_layer.water(self.target_pos)
 
     def use_seed(self):
         pass
@@ -150,7 +151,6 @@ class Player(pygame.sprite.Sprite):
                         self.sleep = True
                     if collided_interaction_sprite[0].name == 'Trader':
                         pass
-
 
     def get_status(self):
         # idle

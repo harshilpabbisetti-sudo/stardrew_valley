@@ -85,11 +85,15 @@ class Level:
         )
 
     def reset(self):
+        # apple
         for tree in self.tree_sprites.sprites():
             if tree.alive:
                 for apples in tree.apple_sprite.sprites():
                     apples.kill()
                 tree.create_fruit()
+
+        # soil
+        self.soil_layer.remove_water()
 
     def player_add(self, item):
         self.player.item_inventory[item] += 1
