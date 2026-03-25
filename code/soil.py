@@ -66,6 +66,9 @@ class SoilLayer:
                 if 'F' in self.grid[y][x]:
                     self.grid[y][x].append('X')                                 # 'X' tells that there is a soil patch there
                     self.create_soil_tiles()
+                    if self.raining:
+                        self.water_all()
+                        print(self.raining)
 
     def water(self, point):
         for soil_sprite in self.soil_sprites.sprites():
@@ -86,7 +89,6 @@ class SoilLayer:
             for cell in row:
                 if 'W' in cell:
                     cell.remove('W')
-                    print(cell)
 
     def create_soil_tiles(self):
         self.soil_sprites.empty()
@@ -129,3 +131,12 @@ class SoilLayer:
                     SoilTile(pos=(index_col * TILE_SIZE, index_row * TILE_SIZE),
                              surf=self.soil_surfs[tile_type],
                              groups=[self.all_sprites, self.soil_sprites])
+
+    def water_all(self):
+        for index_row, row in enumerate(self.grid):
+            for index_col, cell in enumerate(row):
+                if 'X' in cell and 'W' not in cell:
+                    cell.append('W')
+                    WaterTile(pos=(index_col * TILE_SIZE, index_row * TILE_SIZE),
+                              surf=choice(self.water_surfs),
+                              groups=[self.all_sprites, self.water_sprites])
