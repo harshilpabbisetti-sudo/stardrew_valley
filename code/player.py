@@ -73,7 +73,7 @@ class Player(pygame.sprite.Sprite):
             self.soil_layer.water(self.target_pos)
 
     def use_seed(self):
-        pass
+        self.soil_layer.plant_seed(self.target_pos, self.selected_seed)
 
     def import_assets(self):
         self.animations = {'up': [], 'down': [], 'left': [], 'right': [],

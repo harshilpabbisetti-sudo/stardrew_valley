@@ -22,7 +22,7 @@ class Level:
         self.tree_sprites = pygame.sprite.Group()
         self.interaction_sprites = pygame.sprite.Group()
 
-        self.soil_layer = SoilLayer(self.all_sprites)
+        self.soil_layer = SoilLayer(self.all_sprites, self.collision_sprites)
         self.setup()
         self.overlay = Overlay(self.player)
         self.transition = Transition(self.reset, self.player)
@@ -99,14 +99,16 @@ class Level:
                     apples.kill()
                 tree.create_fruit()
 
+        # plants
+        self.soil_layer.update_plants()
+
         # randomizing rain
         self.raining = randint(0, 10) > 5
         self.soil_layer.raining = self.raining
         if self.raining:
             self.soil_layer.water_all()
-
-        # soil
-        self.soil_layer.remove_water()
+        else:
+            self.soil_layer.remove_water()
 
     def player_add(self, item):
         self.player.item_inventory[item] += 1
