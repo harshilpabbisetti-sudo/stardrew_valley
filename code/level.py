@@ -7,8 +7,9 @@ from support import *
 from pytmx.util_pygame import load_pygame
 from transition import Transition
 from soil import SoilLayer
-from sky import Rain
+from sky import Rain, Sky
 from random import randint
+from menu import Menu
 
 
 class Level:
@@ -31,6 +32,11 @@ class Level:
         self.rain = Rain(self.all_sprites)
         self.raining = randint(0, 10) > 5
         self.soil_layer.raining = self.raining
+        self.sky = Sky()
+
+        # shop
+        self.shop_active = False
+        self.menu = Menu(self.player, self.toggle_shop)
 
     def setup(self):
         tmx_data = load_pygame('data/map.tmx')
@@ -78,9 +84,13 @@ class Level:
                                      collision_sprites=self.collision_sprites,
                                      tree_sprites=self.tree_sprites,
                                      interaction=self.interaction_sprites,
-                                     soil_layer=self.soil_layer)
+                                     soil_layer=self.soil_layer,
+                                     toggle_shop=self.toggle_shop)
 
             if obj.name == 'Bed':
+                Interaction((obj.x, obj.y), (obj.width, obj.height), self.interaction_sprites, obj.name)
+
+            if obj.name == 'Trader':
                 Interaction((obj.x, obj.y), (obj.width, obj.height), self.interaction_sprites, obj.name)
 
 
@@ -98,6 +108,9 @@ class Level:
                 for apples in tree.apple_sprite.sprites():
                     apples.kill()
                 tree.create_fruit()
+
+        # Sky
+        self.sky.color = self.sky.start_color
 
         # plants
         self.soil_layer.update_plants()
@@ -124,19 +137,28 @@ class Level:
     def player_add(self, item):
         self.player.item_inventory[item] += 1
 
+    def toggle_shop(self):
+        self.shop_active = not self.shop_active
+
     def run(self, dt):
+
+        # drawing logic
         self.display_surface.fill((0, 0, 0))
         self.all_sprites.custom_draw(self.player)
-        self.all_sprites.update(dt)
-        self.plant_collision()
+
+        # updates
+        if self.shop_active:
+            self.menu.update()
+        else:
+            self.all_sprites.update(dt)
+            self.plant_collision()
 
         self.overlay.display()
 
-        # rain
-        if self.raining:
+        # weather
+        if self.raining and not self.shop_active:
             self.rain.update()
-
-        # transition
+        self.sky.display(dt)
         if self.player.sleep:
             self.transition.play()
 

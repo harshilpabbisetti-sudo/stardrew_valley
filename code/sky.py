@@ -5,6 +5,24 @@ from sprites import Generic
 from random import randint, choice
 
 
+class Sky:
+    def __init__(self):
+        self.display_surf = pygame.display.get_surface()
+        self.full_surf = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.start_color = [255, 255, 255]
+        self.end_color = (38, 101, 189)
+        self.color = self.start_color
+        self.time = TIME_TO_NIGHT                                                         # full transition happens in self.time sec
+
+    def display(self, dt):
+        for index, value in enumerate(self.end_color):
+            if self.color[index] > value:
+                self.color[index] -= (self.start_color[index] - value)/self.time * dt
+
+        self.full_surf.fill(self.color)
+        self.display_surf.blit(self.full_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+
+
 class Drop(Generic):
     def __init__(self, surf, pos, moving, groups, z):
         super().__init__(pos, surf, groups, z)

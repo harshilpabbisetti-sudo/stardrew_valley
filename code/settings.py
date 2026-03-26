@@ -51,3 +51,5 @@ PURCHASE_PRICES = {
     'corn': 4,
     'tomato': 5
 }
+
+TIME_TO_NIGHT = 180
