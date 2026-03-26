@@ -77,6 +77,13 @@ class SoilLayer:
         self.create_soil_grid()
         self.create_hit_rect()
 
+        # sound
+        self.hoe_sound = pygame.mixer.Sound('audio/hoe.wav')
+        self.hoe_sound.set_volume(0.1)
+
+        self.plant_sound = pygame.mixer.Sound('audio/plant.wav')
+        self.plant_sound.set_volume(0.2)
+
     def create_soil_grid(self):
         ground = pygame.image.load('graphics/world/ground.png')
         h_tiles, v_tiles = ground.get_width() // TILE_SIZE, ground.get_height() // TILE_SIZE
@@ -149,6 +156,7 @@ class SoilLayer:
                     self.create_soil_tiles()
                     if self.raining:
                         self.water_all()
+                    self.hoe_sound.play()
 
     def water(self, point):
         for soil_sprite in self.soil_sprites.sprites():
@@ -187,6 +195,7 @@ class SoilLayer:
         return is_watered
 
     def plant_seed(self, target_pos, seed):
+        self.plant_sound.play()
         for soil_sprite in self.soil_sprites.sprites():
             if soil_sprite.rect.collidepoint(target_pos):
                 x = soil_sprite.rect.x // TILE_SIZE

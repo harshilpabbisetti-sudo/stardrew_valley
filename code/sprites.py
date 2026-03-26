@@ -77,13 +77,15 @@ class Tree(Generic):
         self.health = 5
         self.alive = True
         self.stump_surf = pygame.image.load(f'graphics/stumps/{name.lower()}.png').convert_alpha()
-        self.invul_timer = Timer(200)
 
         # apples
         self.apple_surf = pygame.image.load('graphics/fruit/apple.png').convert_alpha()
         self.apple_pos = APPLE_POS[name]
         self.apple_sprite = pygame.sprite.Group()
         self.create_fruit()
+
+        # sound
+        self.axe_sound = pygame.mixer.Sound('audio/axe.mp3')
 
     def damage(self):
         # damaging tree
@@ -98,6 +100,9 @@ class Tree(Generic):
                         z=LAYERS['fruit'])
             random_apple.kill()
             self.player_add('apple')
+
+        # sound
+        self.axe_sound.play()
 
     def create_fruit(self):
         for pos in self.apple_pos:
