@@ -2,7 +2,7 @@ import pygame
 from settings import *
 from player import Player
 from overlay import Overlay
-from sprites import Generic, Water, WildFlower, Tree, Interaction
+from sprites import Generic, Water, WildFlower, Tree, Interaction, AfterEffect
 from support import *
 from pytmx.util_pygame import load_pygame
 from transition import Transition
@@ -110,6 +110,17 @@ class Level:
         else:
             self.soil_layer.remove_water()
 
+    def plant_collision(self):
+        if self.soil_layer.plant_sprites:
+            for plant in self.soil_layer.plant_sprites.sprites():
+                if plant.harvestable and plant.rect.colliderect(self.player.hitbox):
+                    self.player_add(plant.plant_type)
+                    plant.kill()
+                    AfterEffect(plant.rect.topleft, plant.image, self.all_sprites, LAYERS['main'], duration=200)
+                    x = plant.rect.centerx // TILE_SIZE
+                    y = plant.rect.centery // TILE_SIZE
+                    self.soil_layer.grid[y][x].remove('P')
+
     def player_add(self, item):
         self.player.item_inventory[item] += 1
 
@@ -117,6 +128,7 @@ class Level:
         self.display_surface.fill((0, 0, 0))
         self.all_sprites.custom_draw(self.player)
         self.all_sprites.update(dt)
+        self.plant_collision()
 
         self.overlay.display()
 

@@ -59,6 +59,7 @@ class Plant(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(midbottom=self.soil.rect.midbottom + pygame.math.Vector2(0, self.y_offset))
 
 
+
 class SoilLayer:
     def __init__(self, all_sprites, collision_sprites):
 
@@ -174,7 +175,6 @@ class SoilLayer:
             for index_col, cell in enumerate(row):
                 if 'X' in cell and 'W' not in cell:
                     cell.append('W')
-                    print('appended W')
                     WaterTile(pos=(index_col * TILE_SIZE, index_row * TILE_SIZE),
                               surf=choice(self.water_surfs),
                               groups=[self.all_sprites, self.water_sprites])
