@@ -73,6 +73,7 @@ class Player(pygame.sprite.Sprite):
         self.target_pos = self.rect.center + PLAYER_TOOL_OFFSET[self.status.split('_')[0]]
 
     def use_tool(self):
+        self.get_target_pos()
         if self.selected_tool == 'hoe':
             self.soil_layer.get_hit(self.target_pos)
         if self.selected_tool == 'axe':
@@ -85,6 +86,7 @@ class Player(pygame.sprite.Sprite):
             self.watering.play()
 
     def use_seed(self):
+        self.get_target_pos()
         if self.seed_inventory[self.selected_seed] > 0:
             self.soil_layer.plant_seed(self.target_pos, self.selected_seed)
             self.seed_inventory[self.selected_seed] -= 1
@@ -220,7 +222,6 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.get_status()
         self.update_timers()
-        self.get_target_pos()
 
         self.move(dt)
         self.animate(dt)

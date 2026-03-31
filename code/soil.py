@@ -3,23 +3,17 @@ from settings import *
 from pytmx.util_pygame import load_pygame
 from support import *
 from random import choice
+from sprites import Generic
 
 
-class SoilTile(pygame.sprite.Sprite):
+class SoilTile(Generic):
     def __init__(self, pos, surf, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_rect(topleft=pos)
-        self.z = LAYERS['soil']
+        super().__init__(pos, surf, groups, z=LAYERS['soil'])
         
 
-class WaterTile(pygame.sprite.Sprite):
+class WaterTile(Generic):
     def __init__(self, pos, surf, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_rect(topleft=pos)
-        self.z = LAYERS['soil water']
-
+        super().__init__(pos, surf, groups, z = LAYERS['soil water'])
 
 class Plant(pygame.sprite.Sprite):
     def __init__(self, plant_type, groups, soil, check_watered):
@@ -51,7 +45,7 @@ class Plant(pygame.sprite.Sprite):
                 self.z = LAYERS['main']
                 self.hitbox = self.rect.copy().inflate(-26, -self.rect.height * 0.4)
 
-            if self.age > self.max_age:
+            if self.age >= self.max_age:
                 self.age = self.max_age
                 self.harvestable = True
 

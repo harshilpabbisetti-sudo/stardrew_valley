@@ -11,7 +11,7 @@ class Sky:
         self.full_surf = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.start_color = [255, 255, 255]
         self.end_color = (38, 101, 189)
-        self.color = self.start_color
+        self.color = self.start_color.copy()
         self.time = TIME_TO_NIGHT                                                         # full transition happens in self.time sec
 
     def display(self, dt):

@@ -51,8 +51,8 @@ class WildFlower(Generic):
 class AfterEffect(Generic):
     def __init__(self, pos, surf, groups, z, duration=200):
         super().__init__(pos, surf, groups, z)
-        self.start_time = pygame.time.get_ticks()
-        self.duration = duration
+        self.timer = Timer(duration, self.kill)
+        self.timer.activate()
 
         # white surf
         mask_surf = pygame.mask.from_surface(self.image)
@@ -61,9 +61,7 @@ class AfterEffect(Generic):
         self.image = new_surf
 
     def update(self, dt):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.start_time > self.duration:
-            self.kill()
+        self.timer.update()
 
 
 class Tree(Generic):
@@ -96,7 +94,7 @@ class Tree(Generic):
             random_apple = choice(self.apple_sprite.sprites())
             AfterEffect(pos=random_apple.rect.topleft,
                         surf=random_apple.image,
-                        groups=self.groups()[0],
+                        groups=self.all_sprites,
                         z=LAYERS['fruit'])
             random_apple.kill()
             self.player_add('apple')
