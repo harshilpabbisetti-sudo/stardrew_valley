@@ -3,6 +3,7 @@ from settings import *
 from support import import_folder
 from sprites import Generic
 from random import randint, choice
+from support import get_abs_path
 
 
 class Sky:
@@ -55,7 +56,7 @@ class Rain:
         self.all_sprites = all_sprites
         self.rain_drops = import_folder('graphics/rain/drops')
         self.rain_floor = import_folder('graphics/rain/floor')
-        self.floor_w, self.floor_h = pygame.image.load('graphics/world/ground.png').get_size()
+        self.floor_w, self.floor_h = pygame.image.load(get_abs_path('graphics/world/ground.png')).get_size()
 
     def create_floor(self):
         Drop(surf=choice(self.rain_floor),

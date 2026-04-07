@@ -13,7 +13,8 @@ class SoilTile(Generic):
 
 class WaterTile(Generic):
     def __init__(self, pos, surf, groups):
-        super().__init__(pos, surf, groups, z = LAYERS['soil water'])
+        super().__init__(pos, surf, groups, z=LAYERS['soil water'])
+
 
 class Plant(pygame.sprite.Sprite):
     def __init__(self, plant_type, groups, soil, check_watered):
@@ -53,7 +54,6 @@ class Plant(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(midbottom=self.soil.rect.midbottom + pygame.math.Vector2(0, self.y_offset))
 
 
-
 class SoilLayer:
     def __init__(self, all_sprites, collision_sprites):
 
@@ -72,19 +72,19 @@ class SoilLayer:
         self.create_hit_rect()
 
         # sound
-        self.hoe_sound = pygame.mixer.Sound('audio/hoe.wav')
+        self.hoe_sound = pygame.mixer.Sound(get_abs_path('audio/hoe.wav'))
         self.hoe_sound.set_volume(0.1)
 
-        self.plant_sound = pygame.mixer.Sound('audio/plant.wav')
+        self.plant_sound = pygame.mixer.Sound(get_abs_path('audio/plant.wav'))
         self.plant_sound.set_volume(0.2)
 
     def create_soil_grid(self):
-        ground = pygame.image.load('graphics/world/ground.png')
+        ground = pygame.image.load(get_abs_path('graphics/world/ground.png'))
         h_tiles, v_tiles = ground.get_width() // TILE_SIZE, ground.get_height() // TILE_SIZE
 
         self.grid = [[[] for col in range(h_tiles)] for row in range(v_tiles)]          # contains the whole world board as nested lists
 
-        for x, y, _ in load_pygame('data/map.tmx').get_layer_by_name('Farmable').tiles():
+        for x, y, _ in load_pygame(get_abs_path('data/map.tmx')).get_layer_by_name('Farmable').tiles():
             self.grid[y][x].append('F')                                 # 'F' tells that the block is farmable
 
     def create_hit_rect(self):

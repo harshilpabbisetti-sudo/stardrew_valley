@@ -66,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         self.toggle_shop = toggle_shop
 
         # sound
-        self.watering = pygame.mixer.Sound('audio/water.mp3')
+        self.watering = pygame.mixer.Sound(get_abs_path('audio/water.mp3'))
         self.watering.set_volume(0.2)
 
     def get_target_pos(self):
@@ -225,4 +225,3 @@ class Player(pygame.sprite.Sprite):
 
         self.move(dt)
         self.animate(dt)
-

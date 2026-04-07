@@ -40,14 +40,14 @@ class Level:
         self.menu = Menu(self.player, self.toggle_shop)
 
         # music
-        self.success = pygame.mixer.Sound('audio/success.wav')
+        self.success = pygame.mixer.Sound(get_abs_path('audio/success.wav'))
         self.success.set_volume(0.3)
 
-        self.bg_music = pygame.mixer.Sound('audio/bg.mp3')
+        self.bg_music = pygame.mixer.Sound(get_abs_path('audio/bg.mp3'))
         self.bg_music.play(loops=-1)
 
     def setup(self):
-        tmx_data = load_pygame('data/map.tmx')
+        tmx_data = load_pygame(get_abs_path('data/map.tmx'))
 
         # house
         for layer in ['HouseFloor', 'HouseFurnitureBottom']:
@@ -101,10 +101,9 @@ class Level:
             if obj.name == 'Trader':
                 Interaction((obj.x, obj.y), (obj.width, obj.height), self.interaction_sprites, obj.name)
 
-
         Generic(
             pos=(0, 0),
-            surf=pygame.image.load('graphics/world/ground.png').convert_alpha(),
+            surf=pygame.image.load(get_abs_path('graphics/world/ground.png')).convert_alpha(),
             groups=self.all_sprites,
             z=LAYERS['ground']
         )
@@ -190,5 +189,5 @@ class CameraGroup(pygame.sprite.Group):
                     if self.display_rect.colliderect(offset_rect):
                         self.display_surface.blit(sprite.image, offset_rect)
 
-                    # analytics
-                    debug_rect(sprite, player, offset_rect, [LAYERS['main']])
+                    # # analytics
+                    # debug_rect(sprite, player, offset_rect, [LAYERS['main']])

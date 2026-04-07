@@ -3,8 +3,13 @@ from os import walk
 import pygame
 
 
-def import_folder(path):
+def get_abs_path(path):
+    game_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
+    return game_folder_path + path
 
+
+def import_folder(path):
+    path = get_abs_path(path)
     if os.path.isdir(path):
         surface_list = []
         for _, __, img_files in walk(path):
@@ -21,6 +26,7 @@ def import_folder(path):
 
 
 def import_folder_dict(path):
+    path = get_abs_path(path)
     if os.path.isdir(path):
         surf_dict = {}
         for _, __, img_files in walk(path):
@@ -32,4 +38,3 @@ def import_folder_dict(path):
         return surf_dict
     else:
         raise Exception(f'{path} does not exist')
-

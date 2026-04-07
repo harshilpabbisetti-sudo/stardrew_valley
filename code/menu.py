@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 from timer import Timer
+from support import get_abs_path
 
 
 class Menu:
@@ -10,7 +11,7 @@ class Menu:
         self.player = player
         self.toggle_menu = toggle_menu
         self.display_surf = pygame.display.get_surface()
-        self.font = pygame.font.Font('font/LycheeSoda.ttf', 30)
+        self.font = pygame.font.Font(get_abs_path('font/LycheeSoda.ttf'), 30)
 
         # options
         self.width = 400
@@ -80,7 +81,6 @@ class Menu:
                     if self.player.money >= PURCHASE_PRICES[current_item]:
                         self.player.seed_inventory[current_item] += 1
                         self.player.money -= PURCHASE_PRICES[current_item]
-
 
         # clamping index
         if self.index < 0:

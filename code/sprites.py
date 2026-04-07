@@ -2,6 +2,7 @@ import pygame
 from settings import *
 from random import randint, choice
 from timer import Timer
+from support import get_abs_path
 
 
 class Generic(pygame.sprite.Sprite):
@@ -74,16 +75,16 @@ class Tree(Generic):
         # tree attributes
         self.health = 5
         self.alive = True
-        self.stump_surf = pygame.image.load(f'graphics/stumps/{name.lower()}.png').convert_alpha()
+        self.stump_surf = pygame.image.load(get_abs_path(f'graphics/stumps/{name.lower()}.png')).convert_alpha()
 
         # apples
-        self.apple_surf = pygame.image.load('graphics/fruit/apple.png').convert_alpha()
+        self.apple_surf = pygame.image.load(get_abs_path('graphics/fruit/apple.png')).convert_alpha()
         self.apple_pos = APPLE_POS[name]
         self.apple_sprite = pygame.sprite.Group()
         self.create_fruit()
 
         # sound
-        self.axe_sound = pygame.mixer.Sound('audio/axe.mp3')
+        self.axe_sound = pygame.mixer.Sound(get_abs_path('audio/axe.mp3'))
 
     def damage(self):
         # damaging tree
