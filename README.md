@@ -3,8 +3,11 @@
 
 Sprout Land is an interactive 2D farming simulator built with Python and Pygame. Heavily inspired by the mechanics of Stardew Valley, this project serves as a deep dive into game architecture, specifically focusing on complex sprite grouping, z-index camera sorting, and state-driven player interactions. From chopping down trees to watering dirt patches that dry up with the morning sun, this game brings a functional slice of country life directly to your terminal.
 
-#### Dowload
-Dowload the whole repo and run the main.py file in the code section
+#### To play
+Downoad the whole repo and run the main.exe file
+
+#### Dowload(For Devs)
+Dowload the whole repo and run the main.py file in the code section to play the game
 
 if the graphics look reversed do the following: 
 1. got to code/support.py

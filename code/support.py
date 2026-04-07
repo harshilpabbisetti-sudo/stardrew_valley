@@ -1,11 +1,20 @@
 import os.path
 from os import walk
 import pygame
+import sys
 
 
 def get_abs_path(path):
-    game_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
-    return game_folder_path + path
+    # 1. Check if the game is running as a bundled executable
+    if getattr(sys, 'frozen', False):
+        # The root is the folder where the .exe itself lives
+        game_folder_path = os.path.dirname(sys.executable)
+    else:
+        # The root is one level up from this script (development mode)
+        game_folder_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
+
+    # 2. Use os.path.join instead of + to avoid slash errors between Windows/Mac
+    return os.path.join(game_folder_path, path)
 
 
 def import_folder(path):
