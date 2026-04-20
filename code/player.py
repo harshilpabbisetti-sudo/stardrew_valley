@@ -88,8 +88,8 @@ class Player(pygame.sprite.Sprite):
     def use_seed(self):
         self.get_target_pos()
         if self.seed_inventory[self.selected_seed] > 0:
-            self.soil_layer.plant_seed(self.target_pos, self.selected_seed)
-            self.seed_inventory[self.selected_seed] -= 1
+            if self.soil_layer.plant_seed(self.target_pos, self.selected_seed):
+                self.seed_inventory[self.selected_seed] -= 1
 
     def import_assets(self):
         self.animations = {'up': [], 'down': [], 'left': [], 'right': [],
@@ -103,10 +103,11 @@ class Player(pygame.sprite.Sprite):
             self.animations[animation] = import_folder(full_path)
 
     def animate(self, dt):
-        self.frame_index += 4 * dt
-        while self.frame_index >= len(self.animations[self.status]):
-            self.frame_index -= len(self.animations[self.status])
-        self.image = self.animations[self.status][int(self.frame_index)]
+        if len(self.animations[self.status]) > 0:
+            self.frame_index += 4 * dt
+            while self.frame_index >= len(self.animations[self.status]):
+                self.frame_index -= len(self.animations[self.status])
+            self.image = self.animations[self.status][int(self.frame_index)]
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -167,6 +168,9 @@ class Player(pygame.sprite.Sprite):
                         self.sleep = True
                     if collided_interaction_sprite[0].name == 'Trader':
                         self.toggle_shop()
+                    
+                    self.dirn = pygame.math.Vector2()
+                    self.status = self.status.split('_')[0] + '_idle'
                     self.timers['interaction'].activate()
 
     def get_status(self):

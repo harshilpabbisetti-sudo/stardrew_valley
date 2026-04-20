@@ -24,8 +24,9 @@ class Level:
         self.tree_sprites = pygame.sprite.Group()
         self.interaction_sprites = pygame.sprite.Group()
 
-        self.soil_layer = SoilLayer(self.all_sprites, self.collision_sprites)
-        self.setup()
+        tmx_data = load_pygame(get_abs_path('data/map.tmx'))
+        self.soil_layer = SoilLayer(self.all_sprites, self.collision_sprites, tmx_data)
+        self.setup(tmx_data)
         self.overlay = Overlay(self.player)
         self.transition = Transition(self.reset, self.player)
 
@@ -46,8 +47,7 @@ class Level:
         self.bg_music = pygame.mixer.Sound(get_abs_path('audio/bg.mp3'))
         self.bg_music.play(loops=-1)
 
-    def setup(self):
-        tmx_data = load_pygame(get_abs_path('data/map.tmx'))
+    def setup(self, tmx_data):
 
         # house
         for layer in ['HouseFloor', 'HouseFurnitureBottom']:
@@ -165,7 +165,7 @@ class Level:
 
         # weather
         if self.raining and not self.shop_active:
-            self.rain.update()
+            self.rain.update(self.all_sprites.offset)
         self.sky.display(dt)
         if self.player.sleep:
             self.transition.play()
@@ -181,13 +181,12 @@ class CameraGroup(pygame.sprite.Group):
     def custom_draw(self, player):
         self.offset.x = player.rect.centerx - SCREEN_WIDTH/2
         self.offset.y = player.rect.centery - SCREEN_HEIGHT/2
-        for layer in LAYERS.values():
-            for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
-                if sprite.z == layer:
-                    offset_rect = sprite.rect.copy()
-                    offset_rect.center -= self.offset
-                    if self.display_rect.colliderect(offset_rect):
-                        self.display_surface.blit(sprite.image, offset_rect)
 
-                    # # analytics
-                    # debug_rect(sprite, player, offset_rect, [LAYERS['main']])
+        for sprite in sorted(self.sprites(), key=lambda sprite: (sprite.z, sprite.rect.centery)):
+            offset_rect = sprite.rect.copy()
+            offset_rect.center -= self.offset
+            if self.display_rect.colliderect(offset_rect):
+                self.display_surface.blit(sprite.image, offset_rect)
+
+                # # analytics
+                # debug_rect(sprite, player, offset_rect, [LAYERS['main']])

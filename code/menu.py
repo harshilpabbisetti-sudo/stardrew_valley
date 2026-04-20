@@ -37,8 +37,11 @@ class Menu:
         self.text_surfs = []
         self.total_height = 0
 
-        for item in self.options:
-            text_surf = self.font.render(item, False, 'black')
+        for index, item in enumerate(self.options):
+            if index > self.sell_border:
+                text_surf = self.font.render(f'{item} seed', False, 'black')
+            else:
+                text_surf = self.font.render(item, False, 'black')
             self.text_surfs.append(text_surf)
             self.total_height += text_surf.get_height() + (self.padding * 2)
 
@@ -59,10 +62,11 @@ class Menu:
         keys = pygame.key.get_pressed()
         self.timer.update()
 
-        if keys[pygame.K_ESCAPE]:
-            self.toggle_menu()
-
         if not self.timer.active:
+            if keys[pygame.K_ESCAPE]:
+                self.toggle_menu()
+                self.timer.activate()
+
             if keys[pygame.K_UP]:
                 self.index -= 1
                 self.timer.activate()
@@ -105,7 +109,7 @@ class Menu:
         # border
         if selected:
             pygame.draw.rect(self.display_surf, 'Black', bg_rect, 4, 4)
-            text_pos = (self.main_rect.left + 150, top + self.padding)
+            text_pos = (self.main_rect.left + 220, top + self.padding)
             if self.index <= self.sell_border:   # sell
                 self.display_surf.blit(self.sell_text, text_pos)
             else:   # buy

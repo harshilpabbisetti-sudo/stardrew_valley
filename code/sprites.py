@@ -87,21 +87,22 @@ class Tree(Generic):
         self.axe_sound = pygame.mixer.Sound(get_abs_path('audio/axe.mp3'))
 
     def damage(self):
-        # damaging tree
-        self.health -= 1
+        if self.alive:
+            # damaging tree
+            self.health -= 1
 
-        # removing apple
-        if len(self.apple_sprite.sprites()) > 0:
-            random_apple = choice(self.apple_sprite.sprites())
-            AfterEffect(pos=random_apple.rect.topleft,
-                        surf=random_apple.image,
-                        groups=self.all_sprites,
-                        z=LAYERS['fruit'])
-            random_apple.kill()
-            self.player_add('apple')
+            # removing apple
+            if len(self.apple_sprite.sprites()) > 0:
+                random_apple = choice(self.apple_sprite.sprites())
+                AfterEffect(pos=random_apple.rect.topleft,
+                            surf=random_apple.image,
+                            groups=self.all_sprites,
+                            z=LAYERS['fruit'])
+                random_apple.kill()
+                self.player_add('apple')
 
-        # sound
-        self.axe_sound.play()
+            # sound
+            self.axe_sound.play()
 
     def create_fruit(self):
         for pos in self.apple_pos:

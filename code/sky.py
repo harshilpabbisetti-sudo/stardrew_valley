@@ -19,6 +19,8 @@ class Sky:
         for index, value in enumerate(self.end_color):
             if self.color[index] > value:
                 self.color[index] -= (self.start_color[index] - value)/self.time * dt
+                if self.color[index] < value:
+                    self.color[index] = value
 
         self.full_surf.fill(self.color)
         self.display_surf.blit(self.full_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
@@ -58,22 +60,23 @@ class Rain:
         self.rain_floor = import_folder('graphics/rain/floor')
         self.floor_w, self.floor_h = pygame.image.load(get_abs_path('graphics/world/ground.png')).get_size()
 
-    def create_floor(self):
+    def create_floor(self, offset):
         Drop(surf=choice(self.rain_floor),
-             pos=(randint(0, self.floor_w),
-                  randint(0, self.floor_h)),
+             pos=(randint(0, SCREEN_WIDTH+50) + offset.x,
+                  randint(-50, SCREEN_HEIGHT) + offset.y),
              moving=False,
              groups=self.all_sprites,
              z=LAYERS['rain floor'])
 
-    def create_drops(self):
+    def create_drops(self, offset):
         Drop(surf=choice(self.rain_drops),
-             pos=(randint(0, self.floor_w),
-                  randint(0, self.floor_h)),
+             pos=(randint(0, SCREEN_WIDTH+50) + offset.x,
+                  randint(-50, SCREEN_HEIGHT) + offset.y),
              moving=True,
              groups=self.all_sprites,
              z=LAYERS['rain drops'])
 
-    def update(self):
-        self.create_drops()
-        self.create_floor()
+    def update(self, offset):
+        if randint(0, 10) < 4:
+            self.create_drops(offset)
+            self.create_floor(offset)

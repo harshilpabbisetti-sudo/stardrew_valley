@@ -10,12 +10,7 @@ def join(path_list):
 
 def clean_path(path):
     # making path platform/os independent
-    if "/" in path:
-        os.path.join(*path.split('/'))
-
-    elif "\\" in path:
-        os.path.join(*path.split('/'))
-    return os.path.normpath(path)
+    return os.path.normpath(path.replace('/', os.sep).replace('\\', os.sep))
 
 
 def get_abs_path(path):
@@ -37,11 +32,11 @@ def import_folder(path):
     if os.path.isdir(path):
         surface_list = []
         for _, __, img_files in walk(path):
-            for image in img_files:
+            # Sort filenames numerically/alphabetically to ensure consistent order across OS
+            for image in sorted(img_files, key=lambda name: int(name.split('.')[0]) if name.split('.')[0].isdigit() else name):
                 full_path = join([path, image])
                 image_surf = pygame.image.load(full_path).convert_alpha()
                 surface_list.append(image_surf)
-            surface_list.reverse()
 
         return surface_list
 
@@ -54,7 +49,7 @@ def import_folder_dict(path):
     if os.path.isdir(path):
         surf_dict = {}
         for _, __, img_files in walk(path):
-            for image in img_files:
+            for image in sorted(img_files):
                 full_path = join([path, image])
                 image_surf = pygame.image.load(full_path).convert_alpha()
                 surf_dict[image.split('.')[0]] = image_surf

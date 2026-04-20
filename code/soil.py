@@ -55,7 +55,7 @@ class Plant(pygame.sprite.Sprite):
 
 
 class SoilLayer:
-    def __init__(self, all_sprites, collision_sprites):
+    def __init__(self, all_sprites, collision_sprites, tmx_data):
 
         # sprite groups
         self.all_sprites = all_sprites
@@ -68,7 +68,7 @@ class SoilLayer:
         self.soil_surfs = import_folder_dict('graphics/soil')
         self.water_surfs = import_folder('graphics/soil_water')
 
-        self.create_soil_grid()
+        self.create_soil_grid(tmx_data)
         self.create_hit_rect()
 
         # sound
@@ -78,13 +78,13 @@ class SoilLayer:
         self.plant_sound = pygame.mixer.Sound(get_abs_path('audio/plant.wav'))
         self.plant_sound.set_volume(0.2)
 
-    def create_soil_grid(self):
+    def create_soil_grid(self, tmx_data):
         ground = pygame.image.load(get_abs_path('graphics/world/ground.png'))
         h_tiles, v_tiles = ground.get_width() // TILE_SIZE, ground.get_height() // TILE_SIZE
 
         self.grid = [[[] for col in range(h_tiles)] for row in range(v_tiles)]          # contains the whole world board as nested lists
 
-        for x, y, _ in load_pygame(get_abs_path('data/map.tmx')).get_layer_by_name('Farmable').tiles():
+        for x, y, _ in tmx_data.get_layer_by_name('Farmable').tiles():
             self.grid[y][x].append('F')                                 # 'F' tells that the block is farmable
 
     def create_hit_rect(self):
@@ -98,16 +98,21 @@ class SoilLayer:
                     self.hit_rect.append(rect)
 
     def create_soil_tiles(self):
-        self.soil_sprites.empty()
+        for sprite in self.soil_sprites.sprites():
+            sprite.kill()
+
+        v_tiles = len(self.grid)
+        h_tiles = len(self.grid[0])
+
         for index_row, row in enumerate(self.grid):
             for index_col, cell in enumerate(row):
                 if 'X' in cell:
 
                     # tile options
-                    t = 'X' in self.grid[index_row - 1][index_col]                  # checks neighbors
-                    b = 'X' in self.grid[index_row + 1][index_col]
-                    r = 'X' in row[index_col + 1]
-                    l = 'X' in row[index_col - 1]
+                    t = 'X' in self.grid[index_row - 1][index_col] if index_row > 0 else False
+                    b = 'X' in self.grid[index_row + 1][index_col] if index_row < v_tiles - 1 else False
+                    r = 'X' in row[index_col + 1] if index_col < h_tiles - 1 else False
+                    l = 'X' in row[index_col - 1] if index_col > 0 else False
 
                     tile_type = 'o'
 
@@ -145,7 +150,7 @@ class SoilLayer:
                 x = rect.x // TILE_SIZE
                 y = rect.y // TILE_SIZE
 
-                if 'F' in self.grid[y][x]:
+                if 'F' in self.grid[y][x] and 'X' not in self.grid[y][x]:
                     self.grid[y][x].append('X')                                 # 'X' tells that there is a soil patch there
                     self.create_soil_tiles()
                     if self.raining:
@@ -157,11 +162,13 @@ class SoilLayer:
             if soil_sprite.rect.collidepoint(point):
                 x = soil_sprite.rect.x // TILE_SIZE
                 y = soil_sprite.rect.y // TILE_SIZE
-                self.grid[y][x].append('W')                                     # 'W' tells that the soil patch is watered
+                
+                if 'W' not in self.grid[y][x]:
+                    self.grid[y][x].append('W')                                     # 'W' tells that the soil patch is watered
 
-                WaterTile(pos=soil_sprite.rect.topleft,
-                          surf=choice(self.water_surfs),
-                          groups=[self.all_sprites, self.water_sprites])
+                    WaterTile(pos=soil_sprite.rect.topleft,
+                              surf=choice(self.water_surfs),
+                              groups=[self.all_sprites, self.water_sprites])
 
     def remove_water(self):
         for water_sprite in self.water_sprites.sprites():
@@ -170,7 +177,8 @@ class SoilLayer:
         for row in self.grid:
             for cell in row:
                 if 'W' in cell:
-                    cell.remove('W')
+                    while 'W' in cell:
+                        cell.remove('W')
 
     def water_all(self):
         for index_row, row in enumerate(self.grid):
@@ -189,7 +197,6 @@ class SoilLayer:
         return is_watered
 
     def plant_seed(self, target_pos, seed):
-        self.plant_sound.play()
         for soil_sprite in self.soil_sprites.sprites():
             if soil_sprite.rect.collidepoint(target_pos):
                 x = soil_sprite.rect.x // TILE_SIZE
@@ -198,6 +205,9 @@ class SoilLayer:
                 if 'P' not in self.grid[y][x]:
                     self.grid[y][x].append('P')
                     Plant(seed, [self.all_sprites, self.plant_sprites, self.collision_sprites], soil_sprite, self.check_watered)
+                    self.plant_sound.play()
+                    return True
+        return False
 
     def update_plants(self):
         for plant in self.plant_sprites.sprites():
