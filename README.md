@@ -49,8 +49,8 @@ This project was developed as part of a learning journey, based on the excellent
 ## 🚀 Getting Started
 
 ### 🎮 Downloading the Game
-- **Windows:** Go to the **[Actions](https://github.com/harshilpabbisetti-sudo/stardrew_valley/actions)** tab, select the latest successful run, and download the `SproutValley-Windows` artifact from the bottom of the page.
-- **macOS:** Download the repository and run the `dist/SproutValley` file.
+- **Windows & macOS:** Go to the **[Actions](https://github.com/harshilpabbisetti-sudo/stardrew_valley/actions)** tab, select the latest successful run, and download either the `SproutValley-Windows` or `SproutValley-Mac` artifact from the bottom of the page.
+- **Note for macOS:** The download is a `.zip` file. After extracting it, you may need to right-click and select "Open" to bypass macOS security checks for unsigned apps.
 
 ### Prerequisites (for Developers)
 - **Python 3.8 or higher**
