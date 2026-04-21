@@ -17,8 +17,11 @@ def get_abs_path(path):
     path = clean_path(path)
     # 1. Check if the game is running as a bundled executable
     if getattr(sys, 'frozen', False):
-        # The root is the folder where the .exe itself lives
-        game_folder_path = os.path.dirname(sys.executable)
+        # Support PyInstaller's _MEIPASS for self-contained builds
+        if hasattr(sys, '_MEIPASS'):
+            game_folder_path = sys._MEIPASS
+        else:
+            game_folder_path = os.path.dirname(sys.executable)
     else:
         # The root is one level up from this script (development mode)
         game_folder_path = os.path.dirname(clean_path(os.path.dirname(os.path.abspath(__file__))))
